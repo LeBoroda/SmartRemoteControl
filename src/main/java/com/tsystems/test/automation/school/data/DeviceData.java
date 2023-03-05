@@ -6,11 +6,7 @@ public enum DeviceData implements IMenuData {
     VIDEO("VIDEO"),
     LIGHTING("LIGHTING");
 
-    private String name;
-
-    public String getName() {
-        return name;
-    }
+    private final String name;
 
     DeviceData(String name) {
         this.name = name;

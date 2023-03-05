@@ -9,12 +9,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Runner {
-    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private static ArrayList<AbsDevice> deviceList = new ArrayList<>();
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static final ArrayList<AbsDevice> deviceList = new ArrayList<>();
+
     public static void main(String[] args) {
         System.out.println("Welcome to Smart Remote Control Center!");
-        boolean timeToQuit = false;
-        while(!timeToQuit){
+        while (true) {
             runMenu(MainMenuCommandsData.values());
             String userInput = getUserInput();
             try {
@@ -28,33 +28,35 @@ public class Runner {
                     case EXIT:
                         System.exit(0);
                 }
-            }catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("There is no such menu item. Please try again");
             }
         }
     }
-    private static void runMenu(IMenuData[] menuItems){
+
+    private static void runMenu(IMenuData[] menuItems) {
         System.out.println("Please chose menu item from below:");
-        for(IMenuData menuItem : menuItems){
+        for (IMenuData menuItem : menuItems) {
             System.out.printf(" / %s / ", menuItem);
         }
         System.out.println();
     }
-    private static void runManageMenu(IMenuData[] menuItems){
+
+    private static void runManageMenu(IMenuData[] menuItems) {
         boolean timeToQuit = false;
-        while(!timeToQuit){
+        while (!timeToQuit) {
             runMenu(menuItems);
             String userInput = getUserInput();
             try {
-                switch (ManageItemsMenuData.valueOf(userInput)){
+                switch (ManageItemsMenuData.valueOf(userInput)) {
                     case LIST:
                         showDevicesList();
                         break;
                     case ADD:
                         runMenu(DeviceData.values());
                         String userDeviceTypeInput = getUserInput();
-                        try{
-                            switch (DeviceData.valueOf(userDeviceTypeInput)){
+                        try {
+                            switch (DeviceData.valueOf(userDeviceTypeInput)) {
                                 case HEATING:
                                     System.out.println("Please input device ID");
                                     String deviceID = getUserInput();
@@ -89,6 +91,7 @@ public class Runner {
             }
         }
     }
+
     private static void runControlMenu(IMenuData[] menuItems) {
         boolean timeToQuit = false;
         while (!timeToQuit) {
@@ -97,7 +100,7 @@ public class Runner {
             try {
                 switch (ControlItemsMenuData.valueOf(userInput)) {
                     case DEVICE:
-                        if(deviceList.size() !=0) {
+                        if (deviceList.size() != 0) {
                             showDevicesList();
                             System.out.println("Please chose a device");
                             String userDeviceInput = getUserInput();
@@ -117,42 +120,45 @@ public class Runner {
             }
         }
     }
-    public static String getUserInput(){
-        String userInput="";
-        try{
+
+    public static String getUserInput() {
+        String userInput = "";
+        try {
             userInput = reader.readLine().toUpperCase().trim();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return userInput;
     }
-    private static void showDevicesList(){
-        if(deviceList.size()==0){
+
+    private static void showDevicesList() {
+        if (deviceList.size() == 0) {
             System.out.println("No items registered. Please add your device.");
         } else {
             System.out.println("You have the following devices added:");
-            for(AbsDevice device : deviceList){
+            for (AbsDevice device : deviceList) {
                 System.out.printf(" / %s / ", device.getDeviceID());
             }
             System.out.println();
         }
     }
-    private static AbsDevice getChosenDevice(String userInput){
-        String result=userInput;
+
+    private static AbsDevice getChosenDevice(String userInput) {
+        String result = userInput;
         AbsDevice resultDevice = null;
         boolean deviceExists = false;
-        while (!deviceExists){
-            for(AbsDevice device: deviceList){
-                if(result.equals(device.getDeviceID())){
+        while (!deviceExists) {
+            for (AbsDevice device : deviceList) {
+                if (result.equals(device.getDeviceID())) {
                     deviceExists = true;
                     resultDevice = device;
                 }
             }
-            if(!deviceExists){
+            if (!deviceExists) {
                 System.out.printf("There is no device %s, please check your input.\n", result);
                 try {
                     result = reader.readLine().toUpperCase().trim();
-                } catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

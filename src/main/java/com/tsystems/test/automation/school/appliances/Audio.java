@@ -1,6 +1,5 @@
 package com.tsystems.test.automation.school.appliances;
 
-import com.tsystems.test.automation.school.appliances.SoundSystem;
 import com.tsystems.test.automation.school.data.appliancemenudata.AudioMenuData;
 
 import static com.tsystems.test.automation.school.Runner.getUserInput;
@@ -9,37 +8,35 @@ public class Audio extends SoundSystem {
     public Audio(String deviceID) {
         super(deviceID);
     }
+
     @Override
-    public void showMenu(){
+    public void showMenu() {
         System.out.println("Please choose the action from below:");
-        for(AudioMenuData menuItem: AudioMenuData.values()){
+        for (AudioMenuData menuItem : AudioMenuData.values()) {
             System.out.printf(" / %s / ", menuItem);
         }
         System.out.println();
     }
 
     @Override
-    public void doControl(){
+    public void doControl() {
         System.out.println("Please input your command.");
         String commandToDo = getUserInput();
-        try{
+        try {
             int desiredVol;
-            switch (AudioMenuData.valueOf(commandToDo)){
+            switch (AudioMenuData.valueOf(commandToDo)) {
                 case ON:
                     this.turnOn();
                     break;
                 case OFF:
                     this.turnOff();
                     break;
-                case MUTE:
-                    setVolume("0");
-                    break;
                 case VOLUMEUP:
-                    desiredVol = getVolumeLevel()+1;
+                    desiredVol = getVolumeLevel() + 1;
                     setVolume(Integer.toString(desiredVol));
                     break;
                 case VOLUMEDOWN:
-                    desiredVol = getVolumeLevel()-1;
+                    desiredVol = getVolumeLevel() - 1;
                     setVolume(Integer.toString(desiredVol));
                     break;
                 case VOLUMESET:
@@ -48,7 +45,7 @@ public class Audio extends SoundSystem {
                     setVolume(userInput);
                     break;
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }

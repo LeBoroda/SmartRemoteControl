@@ -1,7 +1,8 @@
 package com.tsystems.test.automation.school.appliances;
 
-import com.tsystems.test.automation.school.appliances.AbsDevice;
 import com.tsystems.test.automation.school.data.appliancemenudata.HeatingMenuData;
+import com.tsystems.test.automation.school.exceptions.DeviceIsOffException;
+import com.tsystems.test.automation.school.exceptions.TemperatureOutOfRangeException;
 
 import java.time.LocalDateTime;
 
@@ -9,23 +10,30 @@ import static com.tsystems.test.automation.school.Runner.getUserInput;
 
 public class Heating extends AbsDevice {
     private int temp;
+    private final int minTemp = 16;
+    private final int maxTemp = 75;
+
     public Heating(String deviceID) {
         super(deviceID);
     }
-    private void setTemp(int temp){
+
+    private void setTemp(int temp) {
         this.temp = temp;
     }
-    private int getTemp(){
+
+    private int getTemp() {
         return temp;
     }
+
     @Override
-    public void showMenu(){
+    public void showMenu() {
         System.out.println("Please choose the action from below:");
-        for(HeatingMenuData menuItem: HeatingMenuData.values()){
+        for (HeatingMenuData menuItem : HeatingMenuData.values()) {
             System.out.printf(" / %s / ", menuItem);
         }
         System.out.println();
     }
+
     @Override
     public void doControl() {
         System.out.println("Please input your command.");
@@ -48,44 +56,44 @@ public class Heating extends AbsDevice {
                     break;
             }
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
+
     @Override
-    public void turnOn(){
+    public void turnOn() {
         super.turnOn();
         this.temp = 17;
         System.out.printf("Device %s default temperature is %d.\n", this.getDeviceID(), this.getTemp());
     }
 
-    private void setTemperature(String temp){
-        if (this.getDeviceStatus().equals("off")) {
-            System.out.printf("Device %s is off.\n", this.getDeviceID());
-        } else {
-            int tempToSet = Integer.parseInt(checkNumberInput(temp));
-            while (true) {
-                if (tempToSet < 16) {
-                    System.out.println("This is heating, not cooler. Please enter again.");
-                    tempToSet = Integer.parseInt(checkNumberInput(getUserInput()));
-                } else if (tempToSet > 35 && tempToSet <= 50) {
-                    System.out.println("Your power company bill will kill you. Please enter again.");
-                    tempToSet = Integer.parseInt(checkNumberInput(getUserInput()));
-                } else if (tempToSet > 50) {
-                    System.out.println("You will be cooked in 3 hours like a turkey. Please enter again.");
-                    tempToSet = Integer.parseInt(checkNumberInput(getUserInput()));
+    private void setTemperature(String temp) {
+        try {
+            if (this.getDeviceStatus().equals("off")) {
+                throw new DeviceIsOffException(this.getDeviceID());
+            } else {
+                int tempToSet = Integer.parseInt(checkNumberInput(temp));
+                if (tempToSet < minTemp || tempToSet > maxTemp) {
+                    throw new TemperatureOutOfRangeException(this.getDeviceID(), minTemp, maxTemp);
                 } else {
                     setTemp(tempToSet);
                     System.out.printf("Device %s temperature is set to %d at %s.\n", this.getDeviceID(), tempToSet, LocalDateTime.now().toString());
-                    break;
                 }
             }
+        } catch (DeviceIsOffException | TemperatureOutOfRangeException e) {
+            System.out.println(e.getMessage());
         }
     }
+
     private void checkTemp() {
-        if (this.getDeviceStatus().equals("off")) {
-            System.out.printf("Device %s is off.\n", this.getDeviceID());
-        } else {
-            System.out.printf("Device %s temperature is set to %d.\n", this.getDeviceID(), this.getTemp());
+        try {
+            if (this.getDeviceStatus().equals("off")) {
+                throw new DeviceIsOffException(this.getDeviceID());
+            } else {
+                System.out.printf("Device %s temperature is set to %d.\n", this.getDeviceID(), this.getTemp());
+            }
+        } catch (DeviceIsOffException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

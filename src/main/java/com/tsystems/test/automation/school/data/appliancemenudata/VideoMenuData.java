@@ -10,13 +10,10 @@ public enum VideoMenuData {
     VOLUMEDOWN("VOLUMEDOWN"),
     VOLUMESET("VOLUMESET"),
     MUTE("MUTE");
-    private String name;
+    private final String name;
 
     VideoMenuData(String name) {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
 }

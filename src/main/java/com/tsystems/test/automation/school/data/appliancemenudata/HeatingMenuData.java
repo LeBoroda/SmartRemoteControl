@@ -6,13 +6,10 @@ public enum HeatingMenuData {
     TEMPSET("TEMPSET"),
     TEMPCHECK("TEMPCHECK");
 
-    private String name;
+    private final String name;
 
     HeatingMenuData(String name) {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
 }
